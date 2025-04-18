@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Highlight find and find all</title>
+  <style>
+    .highlight {
+      background-color: red;
+      font-weight: bold;
+    }
+    #paragraph {
+      margin-top: 20px;
+      background-color: #000000;
+      color: aliceblue;
+    }
+  </style>
+</head>
+<body>
+  <input type="text" id="text" placeholder="find word" />
+  <button onclick="find()">Find First</button>
+  <button onclick="findAll()">Find All</button>
+
+  <div id="paragraph">
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium odit vel numquam quae officia consectetur quam tempore minus sunt, dolorum ipsa eius, iste, delectus odio minima aut veritatis impedit cum!
+    Hic, fuga quas aut nesciunt illum officiis, voluptatibus eius voluptas vitae voluptatem temporibus vero dignissimos, dolore quos esse labore reprehenderit molestias! Necessitatibus quae saepe libero odit a cumque earum similique.
+    Facilis repellendus rerum explicabo, nemo in quas impedit, numquam dolorem, minus placeat repudiandae! Quos sint, quaerat libero quia vero, iste, omnis reiciendis tenetur reprehenderit expedita odit harum culpa quas a.
+    Vero ipsa illo dolores ab eaque ipsam. Assumenda eveniet asperiores eos quibusdam qui commodi odit delectus dolorem aut vero architecto cum minima quia, sapiente perspiciatis deserunt aliquid sit dolore aperiam.
+    Perferendis praesentium sit ullam expedita et aliquid quas vero cum error nulla dolorem fugit, recusandae iste illo quidem assumenda, voluptas odit odio illum pariatur ipsam? Ad, et perspiciatis. Consectetur, numquam!
+    Accusantium, ab. Id ut at dolore aliquid eos voluptatem tempora eaque, sint, cum omnis qui blanditiis. Perferendis quidem, repellendus itaque ad debitis nisi explicabo harum, corrupti quae officiis consequuntur et?
+    Repellendus eius rem consequatur consectetur earum dolores, consequuntur praesentium aliquam quaerat tempora. Illum molestiae dicta quam. Facere qui error eligendi. Perspiciatis officia fugiat corporis, architecto libero deserunt hic! Libero, nulla!
+    Officia provident laborum voluptatem assumenda sequi amet quos repellendus, dolores sint ipsum, ad quis ut distinctio eaque necessitatibus illum dolore asperiores aliquam aliquid, saepe cupiditate doloremque incidunt quisquam. Cum, amet?
+    Dolores saepe voluptas veritatis pariatur animi eligendi temporibus consequatur beatae ullam a voluptatum ipsa cum quam rem, aliquid facere labore necessitatibus quae aperiam libero quos fuga possimus assumenda hic! Explicabo!
+    Temporibus atque voluptatum ipsa asperiores optio tempore iste deserunt facere modi soluta voluptatem unde accusamus expedita, suscipit illum explicabo vitae? Est minus repellendus non temporibus corrupti repudiandae beatae sed et.
+  </div>
+
+  <script>
+    const para = document.getElementById("paragraph");
+    const originalText = para.innerText;
+
+    function find() {
+      const word = document.getElementById("text").value.trim();
+      console.log("+++++++++++++++++++++++");
+      
+      if (!word) return;
+
+      const words = para.innerText.split(" ");
+      const index = words.findIndex(w => w.toLowerCase().includes(word.toLowerCase()));
+
+      if (index !== -1) {
+        words[index] = `<span class="highlight">${words[index]}</span>`;
+        para.innerHTML = words.join(" ");
+      }
+    }
+
+    function findAll() {
+      const word = document.getElementById("text").value.trim();
+      if (!word) return;
+
+      const words = para.innerText.split(" ");
+      const highlighted = words.map(w => 
+        w.toLowerCase().includes(word.toLowerCase()) 
+          ? `<span class="highlight">${w}</span> `
+          : w
+      );
+      para.innerHTML = highlighted.join(" ");
+    }
+  </script>
+
+</body>
+</html>
