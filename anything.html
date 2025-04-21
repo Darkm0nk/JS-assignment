@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Vehicle Maintenance Tracker</title>
+    <style>
+      .completed {
+        text-decoration: line-through;
+        color: gray;
+      }
+      .task {
+        margin: 10px 0;
+        border-bottom: 1px solid #ccc;
+        padding: 10px;
+      }
+      .actions button {
+        margin-right: 5px;
+      }
+    </style>
+    <script>
+        let tasks = [];
+        window.onload = function () {
+        tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+        const form = document.getElementById('taskForm');
+        const filterSelect = document.getElementById('filterStatus');
+        const taskList = document.getElementById('taskList');
+
+        form.addEventListener('submit', function(evt) {
+          evt.preventDefault();
+          const task = {
+            id: Date.now(),
+            name: document.getElementById('vehicleName').value,
+            model: document.getElementById('vehicleModel').value,
+            detail: document.getElementById('taskDetail').value,
+            dueDate: document.getElementById('dueDate').value,
+            status: 'pending'
+          };
+          tasks.push(task);
+          saveTasks();
+          form.reset();
+          renderTasks();
+        });
+
+        filterSelect.addEventListener('change', renderTasks);
+
+        function saveTasks() {
+          localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        window.markComplete = function(id) {
+          tasks = tasks.map(task => {
+            if (task.id === id) task.status = 'completed';
+            return task;
+          });
+          saveTasks();
+          renderTasks();
+        }
+
+        window.deleteTask = function(id) {
+          tasks = tasks.filter(task => task.id !== id);
+          saveTasks();
+          renderTasks();
+        }
+
+        window.editTask = function(id) {
+          const task = tasks.find(t => t.id === id);
+          const newName = prompt('Edit Vehicle Name:', task.name);
+          const newModel = prompt('Edit Model:', task.model);
+          const newDetail = prompt('Edit Task Detail:', task.detail);
+          const newDueDate = prompt('Edit Due Date (YYYY-MM-DD):', task.dueDate);
+
+          if (newName && newModel && newDetail && newDueDate) {
+            task.name = newName;
+            task.model = newModel;
+            task.detail = newDetail;
+            task.dueDate = newDueDate;
+            saveTasks();
+            renderTasks();
+          }
+        }
+
+        function renderTasks() {
+          const filter = filterSelect.value;
+          taskList.innerHTML = '';
+
+          tasks
+            .filter(task => filter === 'all' || task.status === filter)
+            .forEach(task => {
+              const taskDiv = document.createElement('div');
+              taskDiv.className = 'task' + (task.status === 'completed' ? ' completed' : '');
+              taskDiv.innerHTML = `
+                <b>${task.name} (${task.model})</b><br>
+                Task: ${task.detail} | Due: ${task.dueDate} | Status: ${task.status}
+                <div class="actions">
+                  <button onclick="markComplete(${task.id})">Complete</button>
+                  <button onclick="editTask(${task.id})">Edit</button>
+                  <button onclick="deleteTask(${task.id})">Delete</button>
+                </div>
+              `;
+              taskList.appendChild(taskDiv);
+            });
+        }
+
+        renderTasks();
+    }
+    </script>
+  </head>
+  <body>
+    <h1>Vehicle Maintenance Tracker</h1>
+
+    <h3>Add Vehicle For Maintainance</h3>
+    <form id="taskForm">
+      <input type="text" id="vehicleName" placeholder="Vehicle Name" required />
+      <input type="text" id="vehicleModel" placeholder="Model" required />
+      <input type="text" id="taskDetail" placeholder="Task Detail" required />
+      <input type="date" id="dueDate" required />
+      <button type="submit">Add Task</button>
+    </form>
+
+    <h3>Filter Tasks</h3>
+    <select id="filterStatus" onchange="renderTasks()">
+      <option value="all">All</option>
+      <option value="pending">Pending</option>
+      <option value="completed">Completed</option>
+    </select>
+
+    <h3>Task List</h3>
+    <div id="taskList"></div>
+  </body>
+</html>
